@@ -3,13 +3,13 @@ function GetRandomValue(max, min){
     return Math.floor(Math.random() * ( max - min) + min)
 }
 
-
 const app = Vue.createApp({
  data() {
      return {
          PlayerHealth: 100,
          MonsterHealth: 100,
          currentRounds: 0,
+         winners: null,
      }
  },
  computed:{
@@ -18,7 +18,6 @@ const app = Vue.createApp({
              width: this.MonsterHealth + '%'
          }
      },
-
      PlayerBarStyle() {
          return{
           width: this.PlayerHealth + '%'
@@ -28,10 +27,32 @@ const app = Vue.createApp({
          return this.currentRounds % 3 !== 0;
      }
  },
+watch:{
+    PlayerHealth(value){
+     if (value <= 0 && this.MonsterHealth <= 0 ) {
+         //a draw
+         this.winners = 'draw';
+     } else if(value <= 0){
+         //player lost
+         this.winners = 'Monster';
+     }
+    },
+
+    MonsterHealth(value){
+    if(value <= 0 && this.PlayerHealth <= 0){
+    //a draw
+    this.winners = 'draw';
+    }else if(value <= 0){ 
+      //Monser lost
+      this.winners = 'Player';
+    }
+    }
+},
+
  methods: {
     attackMonster(){
         this.currentRounds++;
-        const attackValue = GetRandomValue(5, 12);
+        const attackValue = GetRandomValue(7, 16);
         this.MonsterHealth -= attackValue;
         this.attackPlayer();
       },
